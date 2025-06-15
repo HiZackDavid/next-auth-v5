@@ -1,0 +1,28 @@
+services:
+  # https://hub.docker.com/_/postgres
+  db:
+    image: postgres:17.4
+    container_name: next-auth-v5-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - ${POSTGRES_PORT}:5432
+    volumes:
+      - C:/volumes/postgres-data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4:${SOFTWARE_VERSION_TAG}
+    container_name: next-auth-v5-pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${ADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${ADMIN_PASSWORD}
+    ports:
+      - 8080:80
+    volumes:
+      - C:/volumes/pgadmin-data:/pgadmin4/servers.json
+    depends_on:
+      - db
