@@ -2,7 +2,7 @@
 
 import bcrypt from "bcrypt";
 import { RegisterSchema, RegisterSchemaType } from "@/schemas";
-import { prisma } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 import { getUserByEmail } from "@/data/user";
 
 export const register = async (values: RegisterSchemaType) => {
