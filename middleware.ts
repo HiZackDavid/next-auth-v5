@@ -7,9 +7,9 @@ import {
   publicRoutes,
 } from "@/routes";
 
-export const { auth: middleware } = NextAuth(authConfig);
+export const { auth } = NextAuth(authConfig);
 
-export default middleware((req) => {
+export default auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
 
@@ -20,6 +20,8 @@ export default middleware((req) => {
   if (isApiAuthRoute) {
     return;
   }
+
+  console.log("Is logged in: ", isLoggedIn);
 
   if (isAuthRoute) {
     if (isLoggedIn) {

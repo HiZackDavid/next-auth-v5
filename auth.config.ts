@@ -1,27 +1,13 @@
 import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { LoginSchema } from "@/schemas";
-import { getUserByEmail } from "./data/user";
-import bcrypt from "bcrypt";
 
 // Notice this is only an object, not a full Auth.js instance
 export default {
   providers: [
     Credentials({
       authorize: async (credentials) => {
-        const validatedFields = LoginSchema.safeParse(credentials);
-
-        if (!validatedFields.success) return null;
-
-        const { email, password } = validatedFields.data;
-        const user = await getUserByEmail(email);
-
-        if (!user || !user.password || !user.email) return null;
-
-        const passwordsMatch = await bcrypt.compare(password, user.password);
-        if (passwordsMatch) return user;
-
-        return null;
+        const { authorizeUser } = await import("@/lib/auth/authorizeUser");
+        return authorizeUser(credentials);
       },
     }),
   ],
