@@ -16,3 +16,10 @@ export const RegisterSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
 });
 export type RegisterSchemaType = z.infer<typeof RegisterSchema>;
+
+export const ResetSchema = z.object({
+  email: z.string().email({
+    message: "Email is required",
+  }),
+});
+export type ResetSchemaType = z.infer<typeof ResetSchema>;
