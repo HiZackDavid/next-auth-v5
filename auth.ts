@@ -3,7 +3,7 @@ import authConfig from "@/auth.config";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import { getUserById } from "@/data/user";
-import { JWT } from "next-auth/jwt";
+import JWT from "next-auth/jwt";
 import { UserRole } from "@prisma/client";
 
 declare module "next-auth" {
@@ -37,18 +37,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
   callbacks: {
-    // async signIn({ user }) {
-    //   const existingUser = await getUserById(user.id);
+    async signIn({ user, account }) {
+      // Allow OAuth without email verification
+      if (account?.provider !== "credentials") return true;
+      if (!user.id) return false;
 
-    //   if (!existingUser || !existingUser.emailVerified) {
-    //     return false;
-    //   }
-    //   return true;
-    // },
+      // Prevent sign in without email verification
+      const existingUser = await getUserById(user.id);
+
+      if (!existingUser?.emailVerified) return false;
+
+      // TODO: Add 2FA check
+
+      // if (!existingUser || !existingUser.email || !existingUser.password) {
+      //   return false;
+      // }
+
+      return true;
+    },
     async session({ token, session }) {
-      console.log({
-        sessionToken: token,
-      });
       if (token.sub && session.user) {
         session.user.id = token.sub;
       }
